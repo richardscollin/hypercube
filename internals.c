@@ -5,6 +5,10 @@
 #define DEBUG 1
 #define debug_delay(I) if(DEBUG) { delay(250); }
 
+void write_register_led_or_brightness(unsigned int n, int is_brightness);
+void write_shift_register(unsigned int n);
+void write_brightness_register(unsigned int n);
+
 
 int sin = 21, sclk = 22, lat = 23, blank = 24;
 
@@ -23,23 +27,35 @@ void init_pins()
 
 void write_shift_register(unsigned int n)
 {
+    write_register_led_or_brightness(n, 0);
+}
+
+void write_brightness_register(unsigned int n)
+{
+    write_register_led_or_brightness(n, 1);
+}
+
+void write_register_led_or_brightness(unsigned int n, int is_brightness)
+{
     int i;
-    n = n  & ~(1 << 24);
+    n = n  & ~(is_brightness << 24);
     /* The shift register is only 24 bits long. */
 
     //digitalWrite(blank, HIGH);
     for (i = 0; i < 25; i++) {
 
         digitalWrite(sin, n & 1);
-        digitalWrite(sclk, LOW);
 
-        printf("%d\n", n & 1);
+        //printf("%d\n", n & 1);
 
-        debug_delay(500);
         digitalWrite(sclk, HIGH); /* shift register gets value */
+        debug_delay(500);
+        digitalWrite(sclk, LOW);
         debug_delay(500);
         n = n >> 1; /* dont need to mask out signed bit */
     }
+
+    debug_delay(500); // make this not debug
     //digitalWrite(blank, LOW);
 }
 
@@ -87,11 +103,12 @@ int main (void)
 #if 1
     wiringPiSetup ();
     init_pins();
-    write_shift_register(0xffff);
+    write_brightness_register(0x7F);
+    write_shift_register(0xFFFFFF);
     digitalWrite(lat, LOW);
     debug_delay(500);
     digitalWrite(lat, HIGH);
-    //init_pins();
-    return 0 ;
+    debug_delay(500);
+    return 0;
 #endif
 }
