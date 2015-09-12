@@ -1,42 +1,12 @@
 #include <wiringPi.h>
 #include <stdio.h>
+#include "internals.h"
 
-#define DEBUG
-void init_pins();
-void write_shift_register(unsigned int n);
-struct pair map_to_cube_index(size_t i);
-
-struct pair {
-    size_t a;
-    size_t b;
-};
+#define DEBUG 1
+#define debug_delay(I) if(DEBUG) { delay(250); }
 
 
 int sin = 21, sclk = 22, lat = 23, blank = 24;
-
-int main (void)
-{
-    struct pair p0, p1 = { 3, 10 };
-    p0 = map_to_cube_index(2+3*5+2*25);
-    if (p0.a == p1.a && p0.b == p1.b) {
-        printf("correct");
-    } else {
-        printf("incorrect");
-    }
-    
-#if 0
-    wiringPiSetup ();
-    init_pins();
-    write_shift_register(0xFFF0FFFF);
-    digitalWrite(lat, LOW);
-#ifdef DEBUG
-        delay(500);
-#endif
-    digitalWrite(lat, HIGH);
-    init_pins();
-    return 0 ;
-#endif
-}
 
 void init_pins()
 {
@@ -54,24 +24,26 @@ void init_pins()
 void write_shift_register(unsigned int n)
 {
     int i;
-    n = n & (0x1000000 - 1);
+    n = n  & ~(1 << 24);
     /* The shift register is only 24 bits long. */
 
-    for (i = 0; i < 24; i++) {
+    //digitalWrite(blank, HIGH);
+    for (i = 0; i < 25; i++) {
 
         digitalWrite(sin, n & 1);
         digitalWrite(sclk, LOW);
-        delay(500);
+
+        printf("%d\n", n & 1);
+
+        debug_delay(500);
         digitalWrite(sclk, HIGH); /* shift register gets value */
-#ifdef DEBUG
-        printf("%d\n", (n & 1) );
-        delay(500);
-#endif
+        debug_delay(500);
         n = n >> 1; /* dont need to mask out signed bit */
     }
+    //digitalWrite(blank, LOW);
 }
 
-struct pair map_to_cube_index(size_t i)
+struct pair map_to_register_cube_index_old(size_t i)
 {
     size_t led_index;
     struct pair result;
@@ -88,4 +60,38 @@ struct pair map_to_cube_index(size_t i)
     return result;
 }
 
+struct pair map_to_register_cube_index(size_t i)
+{
+    struct pair result;
+    result.a = i / 18; /* 18: number of usable bits in a shift register */
+    i = i % 18;
+    if (i >= 3 && i <= 4)
+        i += 1;
+    else if (i >= 5 && i <= 6)
+        i += 2;
+    else if (i >= 7 && i <= 11)
+        i += 3;
+    else if (i >= 12 && i <= 13)
+        i += 4;
+    else if (i >= 14 && i <= 15)
+        i += 5;
+    else if (i >= 16 && i <= 17)
+        i += 6;
+    result.b = i;
+    return result;
+}
 
+
+int main (void)
+{
+#if 1
+    wiringPiSetup ();
+    init_pins();
+    write_shift_register(0xffff);
+    digitalWrite(lat, LOW);
+    debug_delay(500);
+    digitalWrite(lat, HIGH);
+    //init_pins();
+    return 0 ;
+#endif
+}
