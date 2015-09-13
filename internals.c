@@ -5,12 +5,13 @@
 #define DEBUG 1
 #define debug_delay(I) if(DEBUG) { delay(250); }
 
-void write_register_led_or_brightness(unsigned int n, int is_brightness);
+void write_register_led_or_brightness(unsigned int n, unsigned int is_brightness);
 void write_shift_register(unsigned int n);
 void write_brightness_register(unsigned int n);
 
 
 int sin = 21, sclk = 22, lat = 23, blank = 24;
+int pins[10] = [21, 22, 23, 24, 25, 1, 4, 5, 6, 26];
 
 void init_pins()
 {
@@ -27,7 +28,9 @@ void init_pins()
 
 void write_shift_register(unsigned int n)
 {
+    digitalWrite(blank, HIGH);
     write_register_led_or_brightness(n, 0);
+    digitalWrite(blank, LOW);
 }
 
 void write_brightness_register(unsigned int n)
@@ -35,28 +38,29 @@ void write_brightness_register(unsigned int n)
     write_register_led_or_brightness(n, 1);
 }
 
-void write_register_led_or_brightness(unsigned int n, int is_brightness)
+void write_register_led_or_brightness(unsigned int n, unsigned int is_brightness)
 {
     int i;
+    printf("%x\n", n);
     n = n  & ~(is_brightness << 24);
+    //n = n | (is_brightness << 24);
     /* The shift register is only 24 bits long. */
 
-    //digitalWrite(blank, HIGH);
+    printf("%x\n", n);
     for (i = 0; i < 25; i++) {
 
         digitalWrite(sin, n & 1);
 
-        //printf("%d\n", n & 1);
+        printf("%d\n", n & 1);
 
-        digitalWrite(sclk, HIGH); /* shift register gets value */
-        debug_delay(500);
         digitalWrite(sclk, LOW);
+        debug_delay(500);
+        digitalWrite(sclk, HIGH); /* shift register gets value */
         debug_delay(500);
         n = n >> 1; /* dont need to mask out signed bit */
     }
 
     debug_delay(500); // make this not debug
-    //digitalWrite(blank, LOW);
 }
 
 struct pair map_to_register_cube_index_old(size_t i)
@@ -98,17 +102,17 @@ struct pair map_to_register_cube_index(size_t i)
 }
 
 
+#ifdef TEST_PINS 
 int main (void)
 {
-#if 1
     wiringPiSetup ();
     init_pins();
     write_brightness_register(0x7F);
-    write_shift_register(0xFFFFFF);
+    printf("brightness done\n");
     digitalWrite(lat, LOW);
-    debug_delay(500);
+    write_shift_register(0xFFFFFF);
     digitalWrite(lat, HIGH);
     debug_delay(500);
     return 0;
-#endif
 }
+#endif

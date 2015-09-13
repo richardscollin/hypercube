@@ -1,10 +1,18 @@
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
+#include <string.h>
 #include <wiringPi.h>
 #include "internals.h"
 
 int register_cube[7][18]; /* soft copy used for reading before writing to the register */
 int led_cube[5][5][5]; /* soft copy used for the game */
+int player[1];
+
+struct position {
+    int x;
+    int y;
+    int z;
+}
 
 
 void write_led(int led_value /* to write */, int x, int y, int z)
@@ -29,36 +37,37 @@ void write_led(int led_value /* to write */, int x, int y, int z)
 
 enum state {
     STATE_INITIALIZE=0,
-
+    MAIN,
 };
 
-void init()
+void init_board()
 {
     int x,y,z;
-    digitalWrite(lat, HIGH);
-    /*
-    for (x=0;x<5;x++) for (y=0;y<5;y++) for (z=0;z<5;z++)
-        write_led(0, x,y,z);
-    */
-
-    for (x=0;x<5;x++) for (y=0;y<5;y++) for (z=0;z<5;z++)
-        write_led(1, x,y,z);
-
+    memset(register_cube, 0, sizeof(register_cube));
+    write_led(0, 0,0,0);
+    /* only flushes one block if unitialized fix */
 }
 
 int main()
 {
-asld
     enum state s = STATE_INITIALIZE;
     while (1)
     {
         switch (s)
         {
             case STATE_INITIALIZE:
-            init();
-
-            return 0;
+            init_board();
+            s = MAIN;
             break;
+
+            case MAIN:
+
+            update_LED();
+
+            if () {
+            }
+
+
         }
     }
 }

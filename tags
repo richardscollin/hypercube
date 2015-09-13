@@ -1,0 +1,28 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DEBUG	internals.c	5;"	d	file:
+STATE_INITIALIZE	hypercube.c	/^    STATE_INITIALIZE=0,$/;"	e	enum:state	file:
+a	internals.h	/^    size_t a;$/;"	m	struct:pair
+b	internals.h	/^    size_t b;$/;"	m	struct:pair
+blank	internals.c	/^int sin = 21, sclk = 22, lat = 23, blank = 24;$/;"	v
+debug_delay	internals.c	6;"	d	file:
+init	hypercube.c	/^void init()$/;"	f
+init_pins	internals.c	/^void init_pins()$/;"	f
+lat	internals.c	/^int sin = 21, sclk = 22, lat = 23, blank = 24;$/;"	v
+led_cube	hypercube.c	/^int led_cube[5][5][5]; \/* soft copy used for the game *\/$/;"	v
+main	hypercube.c	/^int main()$/;"	f
+map_to_register_cube_index	internals.c	/^struct pair map_to_register_cube_index(size_t i)$/;"	f
+map_to_register_cube_index_old	internals.c	/^struct pair map_to_register_cube_index_old(size_t i)$/;"	f
+pair	internals.h	/^struct pair {$/;"	s
+register_cube	hypercube.c	/^int register_cube[7][18]; \/* soft copy used for reading before writing to the register *\/$/;"	v
+sclk	internals.c	/^int sin = 21, sclk = 22, lat = 23, blank = 24;$/;"	v
+sin	internals.c	/^int sin = 21, sclk = 22, lat = 23, blank = 24;$/;"	v
+state	hypercube.c	/^enum state {$/;"	g	file:
+write_brightness_register	internals.c	/^void write_brightness_register(unsigned int n)$/;"	f
+write_led	hypercube.c	/^void write_led(int led_value \/* to write *\/, int x, int y, int z)$/;"	f
+write_register_led_or_brightness	internals.c	/^void write_register_led_or_brightness(unsigned int n, int is_brightness)$/;"	f
+write_shift_register	internals.c	/^void write_shift_register(unsigned int n)$/;"	f
